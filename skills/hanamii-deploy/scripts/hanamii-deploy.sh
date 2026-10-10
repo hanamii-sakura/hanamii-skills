@@ -103,11 +103,12 @@ fi
 
 # 6. 作成 or 再デプロイ
 if [[ -n "$PROJECT" ]]; then
+  if [[ -n "$ENVS" ]]; then  # 先に保存してからデプロイすると、新しいデプロイに反映される
+    curl -sS -X PATCH "${AUTH[@]}" "${JSON[@]}" "$BASE_URL/api/v1/projects/$PROJECT/env" --data "{ \"envs\": $ENV_JSON }" >/dev/null
+    echo "環境変数を保存: $(printf '%s' "$ENV_JSON" | python3 -c 'import json,sys; print(",".join(e["key"] for e in json.load(sys.stdin)))')"
+  fi
   RES=$(curl -sS -N -X POST "${AUTH[@]}" "${JSON[@]}" "$BASE_URL/api/v1/projects/$PROJECT/deploy" \
     --data "{ \"source\": { \"type\": \"zip\", \"checkId\": \"$CHECK_ID\" } }" | tr -d '\r' | python3 -c 'import sys; s=sys.stdin.read(); i=s.find("{"); print(s[i:] if i>=0 else s)')
-  if [[ -n "$ENVS" ]]; then
-    curl -sS -X PATCH "${AUTH[@]}" "${JSON[@]}" "$BASE_URL/api/v1/projects/$PROJECT/env" --data "{ \"envs\": $ENV_JSON }" >/dev/null
-  fi
 else
   RES=$(curl -sS -N -X POST "${AUTH[@]}" "${JSON[@]}" "$BASE_URL/api/v1/projects" \
     --data "{ $WS_FIELD \"name\": \"$NAME\", \"source\": { \"type\": \"zip\", \"checkId\": \"$CHECK_ID\" } $ENV_FIELD }" | tr -d '\r' | python3 -c 'import sys; s=sys.stdin.read(); i=s.find("{"); print(s[i:] if i>=0 else s)')
