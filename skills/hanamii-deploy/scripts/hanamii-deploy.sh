@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # hanamii に ZIP で公開する（新規作成 or 再デプロイ）。curl / python3 / zip だけで動く。
+# 通常は公式 CLI `npx -y hanamii deploy` を使う。このスクリプトは Node.js が無い環境向けの代替。
 # 使い方:
-#   hanamii-deploy.sh --name my-app [--workspace ws_xxx] [--env "K=V,K2=V2"] [--dir .]
-#   hanamii-deploy.sh --project prj_xxx [--env "K=V"] [--dir .]
+#   hanamii-deploy.sh --name my-app [--workspace <workspace-id>] [--env "K=V,K2=V2"] [--dir .]
+#   hanamii-deploy.sh --project <project-id> [--env "K=V"] [--dir .]   # ID は UUID
 # 必要: 環境変数 HANAMII_TOKEN（hnm_ で始まる）。正本の仕様: https://hanamii.jp/docs/public-api.md
 set -euo pipefail
 
@@ -15,7 +16,7 @@ while [[ $# -gt 0 ]]; do
     --workspace) WORKSPACE="$2"; shift 2;;
     --env) ENVS="$2"; shift 2;;
     --dir) DIR="$2"; shift 2;;
-    -h|--help) sed -n 2,6p "$0"; exit 0;;
+    -h|--help) sed -n 2,7p "$0"; exit 0;;
     *) echo "不明な引数: $1" >&2; exit 2;;
   esac
 done
