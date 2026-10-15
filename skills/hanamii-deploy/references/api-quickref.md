@@ -6,12 +6,12 @@
 |---|---|
 | ワークスペース一覧 | `GET /workspaces` → `workspaces[].id` |
 | プロジェクト一覧 | `GET /projects?limit=20` |
-| アップロード URL 発行 | `POST /uploads` body `{"workspaceId":"ws_…","fileName":"app.zip","contentType":"application/zip"}` → `upload.id`, `upload.uploadUrl`, `upload.putCurl` |
+| アップロード URL 発行 | `POST /uploads` body `{"workspaceId":"<workspace-id>","fileName":"app.zip","contentType":"application/zip"}` → `upload.id`, `upload.uploadUrl`, `upload.putCurl` |
 | ZIP を置く | `curl -X PUT '<uploadUrl>' -H 'Content-Type: application/zip' --data-binary '@app.zip'` |
 | 検証して checkId | `POST /uploads/<upload.id>/check` body `{}`、`-N` を付ける → `result.checkId`, `result.canDeploy`, `result.errors` |
-| 新規作成 | `POST /projects` body `{"workspaceId":"ws_…","name":"my-app","source":{"type":"zip","checkId":"check_…"},"envs":[…任意]}` → `project.id` |
+| 新規作成 | `POST /projects` body `{"workspaceId":"<workspace-id>","name":"my-app","source":{"type":"zip","checkId":"check_…"},"envs":[…任意]}` → `project.id` |
 | 再デプロイ | `POST /projects/<id>/deploy` body `{"source":{"type":"zip","checkId":"check_…"}}` |
-| GitHub から作成 | `POST /projects` body `{"workspaceId":"ws_…","name":"my-app","source":{"type":"git","repoFullName":"owner/repo","ref":"main"}}`（GitHub 連携は先に画面で接続） |
+| GitHub から作成 | `POST /projects` body `{"workspaceId":"<workspace-id>","name":"my-app","source":{"type":"git","repoFullName":"owner/repo","ref":"main"}}`（GitHub 連携は先に画面で接続） |
 | 状態と URL | `GET /projects/<id>` → `project.url`, `project.latestDeployment.readyState`（QUEUED / BUILDING / READY / ERROR）, `errorCode` |
 | ログ | `GET /projects/<id>/logs?since=-15m&format=text` |
 | 環境変数を保存 | `PATCH /projects/<id>/env` body `{"envs":[{"key":"K","value":"V","type":"secret"}]}`（保存のみ） |
